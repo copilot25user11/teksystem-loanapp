@@ -1,0 +1,77 @@
+# Workflow name that appears in GitHub Actions UI
+name: Java CI Pipeline
+
+# Define when this workflow will run
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+# Define the jobs to be executed
+jobs:
+  build-and-test:
+    # Specify the runner environment
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the repository code
+      # This step is required to access your repository code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Java Development Kit
+      # Configure JDK 17 with Temurin distribution
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # Step 3: Cache Maven dependencies
+      # This improves workflow execution time by reusing previously downloaded dependencies
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      # Step 4: Build the project
+      # Clean the project and compile the source code
+      - name: Build project
+        run: mvn -B clean compile
+
+      # Step 5: Run tests and verify
+      # Execute all tests and run verification phases
+      - name: Run tests with coverage
+        run: mvn -B test verify
+
+      # Step 6: Package the application
+      # Create the JAR file without running tests again
+      - name: Package application
+        run: mvn -B package -DskipTests
+
+      # Step 7: Generate test coverage report
+      # Create detailed test coverage report using JaCoCo
+      - name: Generate test coverage report
+        run: mvn jacoco:report
+
+      # Step 8: Upload test coverage report
+      # Store the coverage report as a workflow artifact
+      - name: Upload test coverage
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: target/site/jacoco/
+
+      # Step 9: Upload the built JAR file
+      # Store the compiled application as a workflow artifact
+      - name: Upload application JAR
+        uses: actions/upload-artifact@v3
+        with:
+          name: application-jar
+          path: target/*.jar
