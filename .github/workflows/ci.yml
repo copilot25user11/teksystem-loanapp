@@ -20,12 +20,12 @@ jobs:
       # Step 1: Check out the repository code
       # This step is required to access your repository code
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       # Step 2: Set up Java Development Kit
       # Configure JDK 17 with Temurin distribution
       - name: Set up JDK
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -33,7 +33,7 @@ jobs:
       # Step 3: Cache Maven packages
       # This improves workflow execution time by reusing previously downloaded dependencies
       - name: Cache Maven packages
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
@@ -52,10 +52,9 @@ jobs:
       # Step 6: Upload Artifacts
       # Store the compiled application and test reports as workflow artifacts
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: app-artifacts
           path: |
             target/*.jar
             target/surefire-reports
-            
