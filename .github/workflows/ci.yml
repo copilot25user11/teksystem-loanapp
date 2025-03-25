@@ -51,10 +51,10 @@ jobs:
 
       # Step 6: Upload Artifacts
       # Store the compiled application and test reports as workflow artifacts
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: app-artifacts
-          path: |
-            target/*.jar
-            target/surefire-reports
+    #   - name: Upload Artifacts
+    #     uses: actions/upload-artifact@v3
+    #     with:
+    #       name: app-artifacts
+    #       path: |
+    #         target/*.jar
+    #         target/surefire-reports
